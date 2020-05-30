@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Player</title>
+
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="container-fluid">
+
+        <div class="bg-image">
+            <img src="cover.jpg" alt="">
+        </div>
+
+        <div class="song-detail">
+
+            <div class="cover">
+
+                <img class="cover-img" src="cover.jpg" alt="Cover image of song">
+                <h5 class="author">Song Info</h5>
+
+            </div>
+
+            <ul class="buttons">
+                <li class="button"><i class="fas fa-backward fa-2x prev-button"></i></li>
+                <li class="button"><i class="fas fa-play-circle fa-4x playOrPause-button"></i></li>
+                <li class="button"><i class="fas fa-forward fa-2x next-button"></i></i></li>
+            </ul>
+
+            <div class="progress">
+
+                <div id="completed"></div>
+                <input type="range" min="0" max="100" value="0" id="slider">
+
+                <h6 id="timeElapsed">00:00</h6>
+                <h6 id="timeLeft">--:--</h6>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS CDN -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <!-- FontAwesome CDN -->
+    <script src="https://kit.fontawesome.com/b252eac0ba.js" crossorigin="anonymous"></script>
+
+    <!-- Main JS file -->
+    <script src="index.js"></script>
+
+</body>
+</html>
