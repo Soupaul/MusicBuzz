@@ -103,12 +103,13 @@ document.addEventListener("keydown",keyDownHandler);
 function keyDownHandler(e){
 
     if(e.key === " "){
+
+        if(isPlaying)
+            pause();
+        else
+            play();
+
         isPlaying = !isPlaying;
     }
-
-    if(isPlaying)
-        pause();
-    else
-        play();
 
 }
