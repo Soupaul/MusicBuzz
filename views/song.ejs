@@ -1,0 +1,44 @@
+
+<%- include("partials/header") %>
+    <div class="container-fluid">
+
+        <div class="bg-image">
+            <img src=<%= coverImageXL %> alt="Cover image of song">
+        </div>
+
+        <div class="song-detail">
+
+            <div class="cover">
+
+                <img class="cover-img" src=<%= coverImageMedium %> alt="Cover image of song">
+                <h5 class="author"><%= songTitle %></h5>
+
+            </div>
+            
+
+            <ul class="buttons">
+                <li class="button"><i class="fas fa-backward fa-2x prev-button"></i></li>
+                <li class="button"><i class="fas fa-play-circle fa-4x playOrPause-button"></i></li>
+                <li class="button"><i class="fas fa-forward fa-2x next-button"></i></i></li>
+            </ul>
+
+            <div class="progress">
+
+                <div id="completed"></div>
+                <input type="range" min="0" max="100" value="0" id="slider">
+
+                <h6 id="timeElapsed">00:00</h6>
+                <h6 id="timeLeft">--:--</h6>
+
+            </div>
+
+            <audio src=<%= source %> id="song"></audio>
+
+        </div>
+
+    </div>
+
+    <!-- Main JS file -->
+    <script src="/js/index.js"></script>
+
+<%- include("partials/footer") %>

@@ -1,0 +1,74 @@
+<%- include("partials/header") %>
+
+<style>
+
+    body{
+
+        background-color: #333333;
+
+    }
+
+    h4{
+
+        color: white;
+    }
+
+    p{
+
+        color: white;
+
+    }
+
+    a{
+        color: white;
+
+    }
+
+    a:hover{
+
+        text-decoration: none;
+        color: white;
+
+    }
+
+</style>
+
+    <div class="container-fluid">
+
+        <div class="row row-cols-1 row-cols-md-3">
+
+            <% songs.forEach(function(song){ %>
+
+                <div class="col mb-4 mt-4">
+
+                    <div class="card-transparent text-center">
+
+                        <img style="width: 400px; border-radius: 10px;" src=<%= song.cover_medium %> alt="Cover image of song" class="card-img-top">
+
+                        <div class="card-body">
+
+                            <h4 class="card-title"><strong><a href=<%= song.preview %>><%= song.title %></a></strong></h4>
+                            <p class="card-text"><%= song.artist %></p>
+
+                            <!-- <form action="/search" method="POST">
+
+                                <p class="card-text" name="songId"><%= song.id %></p>
+                                <button class="btn btn-light">PLAY</button>
+
+                            </form> -->
+
+                        </div>
+
+                    </div>
+
+                </div>
+                
+            <% }); %>
+
+
+        </div>
+
+    </div>
+
+
+<%- include("partials/footer") %>

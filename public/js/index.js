@@ -1,4 +1,4 @@
-let song = new Audio("song.mp3");
+let song = document.getElementById("song");
 
 const playOrPauseButton = document.querySelector(".playOrPause-button");
 const prevButton = document.querySelector(".prev-button");
