@@ -3,7 +3,13 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const unirest = require("unirest");
 const _ = require("lodash");
-const PORT = 3000;
+
+const mongoose = require("mongoose");
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
+
+
 
 const app = express();
 app.set('view engine','ejs');
@@ -11,6 +17,33 @@ app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 
+
+app.use(session({
+    secret: "Some Random Secret",
+    resave: false,
+    saveUninitialized: false,
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+mongoose.connect("mongodb://localhost:27017/songDB", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+mongoose.set("useCreateIndex", true);
+
+const userSchema = new mongoose.Schema({
+    firstName: String,
+    lastName: String,
+    email: String,
+    password: String,
+});
+
+const playlistSchema = new mongoose.Schema({
+    user: userSchema,
+    songs = [String],
+});
 
 class Song{
 
@@ -129,8 +162,12 @@ app.post("/",function(req,res){
     
 });
 
+
+let PORT = process.env.PORT;
+if (PORT == null || PORT == "") {
+    PORT = 3000;
+}
+
 app.listen(PORT,function(){
-
     console.log("Server started on http://localhost:" + PORT);
-
 });
