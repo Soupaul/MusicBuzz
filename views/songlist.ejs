@@ -8,6 +8,12 @@
 
     }
 
+    h1{
+
+        color: white;
+
+    }
+
     h4{
 
         color: white;
@@ -31,47 +37,65 @@
 
     }
 
+    img {
+        opacity: 0.6;
+        transform: scale(1);
+        transition: transform 0.5s, opacity 0.5s;;
+    }
+
+    img:hover {
+        transform: scale(1.08);
+        opacity: 1;
+    }
 </style>
 
     <div class="container-fluid">
 
-        <form action="/" method="POST">
-            <input type="text" name="query">
-            <button class="btn btn-primary" type="submit">Search</button>
+        <form action="/" class="form-inline" style="padding: 20px 0" method="POST">
+
+            <div class="form-group mx-sm-3">
+
+                <input style="width: 400px;" class="form-control" type="text" name="searchQuery" placeholder="Search a song or artist">
+
+            </div>
+
+            <button type="submit" class="btn btn-success">Search</button>
+
         </form>
-        <br><br>
-        <div class="row row-cols-1 row-cols-md-3">
 
-            <% songs.forEach(function(song){ %>
+        <% if(songs === null){ %>
 
-                <div class="col mb-4 mt-4">
+            <h1>Search for songs and artists!</h1>
 
-                    <div class="card-transparent text-center">
+        <% }else{ %>
 
-                        <img style="width: 400px; border-radius: 10px;" src=<%= song.cover_medium %> alt="Cover image of song" class="card-img-top">
 
-                        <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-4">
 
-                            <h4 class="card-title"><strong><a href=<%= song.preview %>><%= song.title %></a></strong></h4>
-                            <p class="card-text"><%= song.artist %></p>
+                <% songs.forEach(function(song){ %>
 
-                            <!-- <form action="/search" method="POST">
+                    <div class="col mb-4 mt-4">
+                        <a href="/songs/<%= song.id %> ">
+                        <div class="card-transparent text-center">
 
-                                <p class="card-text" name="songId"><%= song.id %></p>
-                                <button class="btn btn-light">PLAY</button>
+                            <img style="width: 400px; border-radius: 10px;" src=<%= song.cover_medium %> alt="Cover image of song" class="card-img-top">
 
-                            </form> -->
+                            <div class="card-body">
+
+                                <h4 class="card-title"><strong><%= song.title %></strong></h4>
+                                <p class="card-text"><%= song.artist %></p>
+
+                            </div>
 
                         </div>
-
+                        </a>
                     </div>
+                    
+                <% }); %>
 
-                </div>
-                
-            <% }); %>
+            </div>
 
-
-        </div>
+       <% } %>
 
     </div>
 

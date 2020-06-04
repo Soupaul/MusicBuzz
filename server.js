@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const unirest = require("unirest");
+const _ = require("lodash");
 const PORT = 3000;
 
 const app = express();
@@ -10,7 +11,6 @@ app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 
-// let songId;
 
 class Song{
 
@@ -26,12 +26,12 @@ class Song{
 
 }
 
-function search(response, query="linkin park"){
+function search(query,callback){
 
     var req = unirest("GET", "https://deezerdevs-deezer.p.rapidapi.com/search");
 
     req.query({
-        "q": query // Change this to search for anything else.
+        "q": query
     });
 
     req.headers({
@@ -43,55 +43,57 @@ function search(response, query="linkin park"){
 
     req.end(function (res) {
         if (res.error) throw new Error(res.error);
+        else{
 
-        const data = res.body.data;
-
-        let songList = [];
-
-        for(const song of data){
-
-            songList.push(new Song(song.id,song.title,song.preview,song.album.cover_medium,song.album.cover_xl,song.artist.name));
+            console.log(res.body);
+            callback(res.body);
 
         }
-
-        
-        response.render("songlist",{songs: songList});
 
     });
 
 }
 
-// function getTrack(response){
+function getTrack(songId,callback){
 
-//     var req = unirest("GET", "https://deezerdevs-deezer.p.rapidapi.com/track/" + songId);
+    var req = unirest("GET", "https://deezerdevs-deezer.p.rapidapi.com/track/" + songId);
 
-//     req.headers({
-//         "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
-//         "x-rapidapi-key": "98685096c7msh43ece79f8aee2f7p163bb6jsn089fa34bed5f",
-//         "useQueryString": true
-//     });
+    req.headers({
+        "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
+        "x-rapidapi-key": "98685096c7msh43ece79f8aee2f7p163bb6jsn089fa34bed5f",
+        "useQueryString": true
+    });
 
 
-//     req.end(function (res) {
-//         if (res.error) throw new Error(res.error);
-
-//         const songData = res.body;
-
-//         console.log(songData);
-
-//         const song = {title: songData.title,preview: songData.preview, cover_medium: songData.album.cover_medium, cover_xl: songData.album.cover_xl};
-
-//         response.render("song",{coverImageXL: song.cover_xl,coverImageMedium: song.cover_medium,songTitle: song.title,source: song.preview });
+    req.end(function (res) {
+        if (res.error) throw new Error(res.error);
         
-//     });
+        else{
 
-// }
+            console.log(res.body);
+            callback(res.body);
 
-// app.get("/song",function(req,res){
+        }
 
-//     getTrack(res);
+    });
 
-// });
+}
+
+app.get("/songs/:id",function(req,res){
+
+    const songId = req.params.id;
+
+    let trackResponse = getTrack(songId,function(response){
+
+        const songData = response;
+
+        const song = {title: songData.title,preview: songData.preview, cover_medium: songData.album.cover_medium, cover_xl: songData.album.cover_xl};
+
+        res.render("song",{coverImageXL: song.cover_xl,coverImageMedium: song.cover_medium,songTitle: song.title,source: song.preview });
+
+    });
+
+});
 
 
 function searchForSongs(query) {
@@ -130,27 +132,33 @@ function searchForSongs(query) {
 
 app.get("/",function(req,res){
 
-    search(res);
+    res.render("songlist",{songs: null});
 
 });
 
-app.post("/", function(req, res) {
-    const query = req.body.query;
-    console.log(query);
-    // const songList = searchForSongs(query);
-    // console.log(songList);
-    // res.render("songlist", {songs: songList});
-    search(res, query);
+app.post("/",function(req,res){
+
+    let query = req.body.searchQuery;
+
+    let searchResponse = search(query,function(response){
+
+        const data = response.data;
+
+        let songList = [];
+
+        for(const song of data){
+
+            songList.push(new Song(song.id,song.title,song.preview,song.album.cover_medium,song.album.cover_xl,song.artist.name));
+
+        }
+
+        res.render("songlist",{songs: songList});
+
+    });
+
+    
+    
 });
-
-// app.post("/search",function(req,res){
-
-//     songId = req.body.songId;
-//     console.log(songId);
-
-//     res.redirect("/song");
-
-// });
 
 app.listen(PORT,function(){
 
