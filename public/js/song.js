@@ -115,6 +115,8 @@ function keyDownHandler(e){
 }
 
 $(document).ready(function () {
-  setTimeout(play, 1000);
-  isPlaying = true;
+
+    isPlaying = true;
+    setTimeout(play, 1000);
+
 });
