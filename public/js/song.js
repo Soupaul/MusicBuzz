@@ -118,5 +118,5 @@ $(document).ready(function () {
 
     isPlaying = true;
     setTimeout(play, 1000);
-
+  
 });

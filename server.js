@@ -1,16 +1,87 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const unirest = require("unirest");
 const _ = require("lodash");
-const PORT = 3000;
+
+const mongoose = require("mongoose");
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const findOrCreate = require("mongoose-findorcreate");
+
+
 
 const app = express();
-app.set('view engine','ejs');
 
+
+app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 
+
+app.use(session({
+    secret: "Some Random Secret",
+    resave: false,
+    saveUninitialized: false,
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+mongoose.connect("mongodb://localhost:27017/songDB", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+mongoose.set("useCreateIndex", true);
+
+// Schema for the user
+const userSchema = new mongoose.Schema({
+    googleId: String,
+});
+
+// Schema for playlist
+const playlistSchema = new mongoose.Schema({
+    user: userSchema,
+    songs: [String],
+});
+
+
+userSchema.plugin(findOrCreate);
+
+
+const User = mongoose.model("User", userSchema);
+
+const Playlist = mongoose.model("Playlist", playlistSchema);
+
+
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    User.findById(id, function(err, user) {
+        done(err, user);
+    });
+});
+
+
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    callbackURL: "http://localhost:8000/auth/google/musicbuzz"
+    },
+    function(accessToken, refreshToken, profile, cb) {
+        console.log(profile);
+        
+        User.findOrCreate({ googleId: profile.id }, function (err, user) {
+            return cb(err, user);
+        });
+    }
+));
 
 class Song{
 
@@ -36,7 +107,7 @@ function search(query,callback){
 
     req.headers({
         "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
-        "x-rapidapi-key": "98685096c7msh43ece79f8aee2f7p163bb6jsn089fa34bed5f",
+        "x-rapidapi-key": process.env.API_KEY,
         "useQueryString": true
     });
 
@@ -129,8 +200,12 @@ app.post("/",function(req,res){
     
 });
 
+
+let PORT = process.env.PORT;
+if (PORT == null || PORT == "") {
+    PORT = 3000;
+}
+
 app.listen(PORT,function(){
-
     console.log("Server started on http://localhost:" + PORT);
-
 });
