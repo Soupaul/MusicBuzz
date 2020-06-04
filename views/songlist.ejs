@@ -37,6 +37,16 @@
 
     }
 
+    img {
+        opacity: 0.6;
+        transform: scale(1);
+        transition: transform 0.5s, opacity 0.5s;;
+    }
+
+    img:hover {
+        transform: scale(1.08);
+        opacity: 1;
+    }
 </style>
 
     <div class="container-fluid">
@@ -52,7 +62,6 @@
             <button type="submit" class="btn btn-success">Search</button>
 
         </form>
-
         <% if(songs === null){ %>
 
             <h1>Search for songs and artists!</h1>
@@ -65,20 +74,20 @@
                 <% songs.forEach(function(song){ %>
 
                     <div class="col mb-4 mt-4">
-
+                        <a href="/songs/<%= song.id %> ">
                         <div class="card-transparent text-center">
 
                             <img style="width: 400px; border-radius: 10px;" src=<%= song.cover_medium %> alt="Cover image of song" class="card-img-top">
 
                             <div class="card-body">
 
-                                <h4 class="card-title"><strong><a href="/songs/<%= song.id %>"><%= song.title %></a></strong></h4>
+                                <h4 class="card-title"><strong><%= song.title %></strong></h4>
                                 <p class="card-text"><%= song.artist %></p>
 
                             </div>
 
                         </div>
-
+                        </a>
                     </div>
                     
                 <% }); %>

@@ -20,6 +20,7 @@ body{
     left: 50%;
     transform: translate(-50%,-50%); 
     overflow: hidden;
+    background-color: black;
 
 }
 
@@ -29,6 +30,7 @@ body{
     filter: blur(10px);
     -webkit-filter: blur(10px);
     z-index: 1;
+    opacity: 0.5;
 
 }
 

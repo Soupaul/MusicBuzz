@@ -95,6 +95,10 @@ app.get("/songs/:id",function(req,res){
 
 });
 
+
+
+
+
 app.get("/",function(req,res){
 
     res.render("songlist",{songs: null});
