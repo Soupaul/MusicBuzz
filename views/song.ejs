@@ -8,10 +8,16 @@
 
         <div class="song-detail">
 
-            <div class="cover">
+            <div class="card text-center mb-4" style="width: 30%; box-shadow: -5px -5px 15px black; border-radius: 15px; margin: 0 auto;">
 
-                <img class="cover-img" src=<%= coverImageMedium %> alt="Cover image of song">
-                <h5 class="author"><%= songTitle %></h5>
+                <img class="card-img-top" style="border-top-left-radius: 15px; border-top-right-radius: 15px;" src=<%= coverImageBig %> alt="Cover image of song">
+                
+                <div class="card-body">
+
+                    <h4 class="card-title"><strong><%= songTitle %></strong></h4>
+                    <p class="card-text"><%= artist %></p>
+
+                </div>
 
             </div>
             
