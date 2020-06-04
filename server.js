@@ -14,12 +14,12 @@ app.use(express.static(__dirname + "/public"));
 
 class Song{
 
-    constructor(id,title,preview,cover_medium,cover_xl,artist){
+    constructor(id,title,preview,cover_big,cover_xl,artist){
 
         this.id = id;
         this.title = title;
         this.preview = preview;
-        this.cover_medium = cover_medium;
+        this.cover_big = cover_big;
         this.cover_xl = cover_xl;
         this.artist = artist;
     }
@@ -87,9 +87,9 @@ app.get("/songs/:id",function(req,res){
 
         const songData = response;
 
-        const song = {title: songData.title,preview: songData.preview, cover_medium: songData.album.cover_medium, cover_xl: songData.album.cover_xl};
+        const song = {title: songData.title,preview: songData.preview, cover_big: songData.album.cover_big, cover_xl: songData.album.cover_xl, artist: songData.artist.name};
 
-        res.render("song",{coverImageXL: song.cover_xl,coverImageMedium: song.cover_medium,songTitle: song.title,source: song.preview });
+        res.render("song",{coverImageXL: song.cover_xl,coverImageBig: song.cover_big,artist: song.artist,songTitle: song.title,source: song.preview });
 
     });
 
@@ -117,7 +117,7 @@ app.post("/",function(req,res){
 
         for(const song of data){
 
-            songList.push(new Song(song.id,song.title,song.preview,song.album.cover_medium,song.album.cover_xl,song.artist.name));
+            songList.push(new Song(song.id,song.title,song.preview,song.album.cover_big,song.album.cover_xl,song.artist.name));
 
         }
 
