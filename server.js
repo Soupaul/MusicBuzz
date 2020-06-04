@@ -96,37 +96,6 @@ app.get("/songs/:id",function(req,res){
 });
 
 
-function searchForSongs(query) {
-    var req = unirest("GET", "https://deezerdevs-deezer.p.rapidapi.com/search");
-
-    req.query({
-        "q": query // Change this to search for anything else.
-    });
-
-    req.headers({
-        "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
-        "x-rapidapi-key": "98685096c7msh43ece79f8aee2f7p163bb6jsn089fa34bed5f",
-        "useQueryString": true
-    });
-
-    let songList = [];
-
-    req.end(function (res) {
-
-        if (res.error) throw new Error(res.error);
-
-        const data = res.body.data;
-
-        
-
-        for(const song of data) {
-            songList.push(new Song(song.id,song.title,song.preview,song.album.cover_medium,song.album.cover_xl,song.artist.name));
-
-        }
-    });
-    return songList;
-}
-
 
 
 
