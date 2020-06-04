@@ -35,6 +35,11 @@
 
     <div class="container-fluid">
 
+        <form action="/" method="POST">
+            <input type="text" name="query">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+        <br><br>
         <div class="row row-cols-1 row-cols-md-3">
 
             <% songs.forEach(function(song){ %>
