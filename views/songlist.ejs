@@ -32,14 +32,14 @@
     }
 
     .coverImage {
-        opacity: 0.6;
+        opacity: 0.8;
         transform: scale(1);
         transition: transform 0.5s, opacity 0.5s;
         box-shadow: -5px -5px 15px black;
     }
 
     .coverImage:hover {
-        transform: scale(1.1);
+        transform: scale(1.06);
         opacity: 1;
     }
 </style>
@@ -49,9 +49,9 @@
         <div class="bg-image">
             <img style="filter: none; -webkit-filter: none;" src="/samples/background_image2.jpg" alt="Background Image">
         </div>
-
+        
         <div id="content">
-
+            <h1><%= message %></h1>
             <form action="/" class="form-inline" style="padding: 20px 0" method="POST">
 
                 <div class="form-group mx-sm-3">
