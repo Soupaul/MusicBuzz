@@ -72,7 +72,7 @@ passport.deserializeUser(function(id, done) {
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "http://localhost:8000/auth/google/musicbuzz"
+    callbackURL: "http://localhost:3000/auth/google/musicbuzz"
     },
     function(accessToken, refreshToken, profile, cb) {
         console.log(profile);
@@ -167,13 +167,34 @@ app.get("/songs/:id",function(req,res){
 });
 
 
-
-
-
 app.get("/",function(req,res){
 
-    res.render("songlist",{songs: null});
+    if (req.isAuthenticated()) {
+        res.render("songlist",{songs: null, message: "successfully logged in"});
+    } else {
+        res.render("songlist", { songs: null, message: "You have not logged in" });
+    }
 
+});
+
+// for logging in the users
+
+app.get("/login",
+    passport.authenticate("google", { scope: ["profile"] })
+);
+
+app.get('/auth/google/musicbuzz', 
+    passport.authenticate('google', { failureRedirect: "/login" }),
+    function(req, res) {
+        // Successful authentication, redirect home.
+        res.redirect("/");
+});
+
+// logs out the users
+
+app.get("/logout", function (req, res) {
+    req.logout();
+    res.redirect("/");
 });
 
 app.post("/",function(req,res){
