@@ -2,12 +2,6 @@
 
 <style>
 
-    body{
-
-        background-color: #333333;
-
-    }
-
     h1{
 
         color: white;
@@ -41,6 +35,7 @@
         opacity: 0.6;
         transform: scale(1);
         transition: transform 0.5s, opacity 0.5s;
+        box-shadow: -5px -5px 15px black;
     }
 
     .coverImage:hover {
@@ -51,11 +46,11 @@
 
     <div class="container-fluid">
 
-        <!-- <div class="bg-image" style="overflow: visible;">
-            <img src="/samples/background_image1.jpg" alt="Background Image">
-        </div> -->
+        <div class="bg-image">
+            <img style="filter: none; -webkit-filter: none;" src="/samples/background_image2.jpg" alt="Background Image">
+        </div>
 
-        <div id="content" style="position: absolute; z-index: 5;">
+        <div id="content">
 
             <form action="/" class="form-inline" style="padding: 20px 0" method="POST">
 

@@ -131,7 +131,7 @@ function getTrack(songId,callback){
 
     req.headers({
         "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
-        "x-rapidapi-key": "98685096c7msh43ece79f8aee2f7p163bb6jsn089fa34bed5f",
+        "x-rapidapi-key": process.env.API_KEY,
         "useQueryString": true
     });
 
