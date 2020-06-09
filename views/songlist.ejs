@@ -31,6 +31,17 @@
 
     }
 
+    #center-display{
+
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 4rem;
+
+    }
+
+
     .coverImage {
         opacity: 0.8;
         transform: scale(1);
@@ -45,27 +56,12 @@
 </style>
 
     <div class="container-fluid">
-
-        <div class="bg-image">
-            <img style="filter: none; -webkit-filter: none;" src="/samples/background_image2.jpg" alt="Background Image">
-        </div>
         
-        <div id="content">
-            <h1><%= message %></h1>
-            <form action="/" class="form-inline" style="padding: 20px 0" method="POST">
-
-                <div class="form-group mx-sm-3">
-    
-                    <input style="width: 400px;" class="form-control" type="text" name="searchQuery" placeholder="Search a song or artist">
-    
-                </div>
-    
-                <button type="submit" class="btn btn-lg btn-success">Search</button>
-    
-            </form>
+        <div>
+            
             <% if(songs === null){ %>
     
-                <h1>Search for songs and artists!</h1>
+                <h1 id="center-display">Search for songs and artists!</h1>
     
             <% }else{ %>
     
@@ -82,7 +78,7 @@
     
                                 <div class="card-body">
     
-                                    <h4 class="card-title"><strong><%= song.title %></strong></h4>
+                                    <h3 class="card-title"><strong><%= song.title %></strong></h3>
                                     <p class="card-text"><%= song.artist %></p>
     
                                 </div>

@@ -1,10 +1,24 @@
 
 <%- include("partials/header") %>
-    <div class="container-fluid">
 
-        <div class="bg-image">
-            <img src=<%= coverImageXL %> alt="Cover image of song">
-        </div>
+    <style>
+
+        :root{
+
+            --songImg: url(<%= coverImageXL %>);
+
+        }
+
+        .bg{
+
+            background-image: var(--songImg);
+            filter: blur(10px);
+            -webkit-filter: blur(10px);
+        }
+
+    </style>
+
+    <div class="container-fluid">
 
         <div class="song-detail">
 
@@ -14,7 +28,7 @@
                 
                 <div class="card-body">
 
-                    <h4 class="card-title"><strong><%= songTitle %></strong></h4>
+                    <h3 class="card-title"><strong><%= songTitle %></strong></h3>
                     <p class="card-text"><%= artist %></p>
 
                 </div>
@@ -22,16 +36,20 @@
             </div>
             
 
-            <ul class="buttons">
-                <li class="button"><i class="fas fa-backward fa-2x prev-button"></i></li>
-                <li class="button"><i class="fas fa-play-circle fa-4x playOrPause-button"></i></li>
-                <li class="button"><i class="fas fa-forward fa-2x next-button"></i></i></li>
-            </ul>
-
             <div class="progress">
 
-                <div id="completed"></div>
-                <input type="range" min="0" max="100" value="0" id="slider">
+                <div class="indicator">
+
+                    <div id="completed"></div>
+                    <input type="range" min="0" max="100" value="0" id="slider">
+
+                </div>
+
+                <ul class="buttons">
+                    <li class="button"><i class="fas fa-backward fa-2x prev-button"></i></li>
+                    <li class="button"><i class="fas fa-play-circle fa-4x playOrPause-button"></i></li>
+                    <li class="button"><i class="fas fa-forward fa-2x next-button"></i></i></li>
+                </ul>
 
                 <h6 id="timeElapsed">00:00</h6>
                 <h6 id="timeLeft">--:--</h6>

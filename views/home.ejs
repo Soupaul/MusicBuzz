@@ -1,0 +1,50 @@
+<%- include("partials/header") %>
+
+    <style>
+
+        #navbarSearch{
+
+            visibility: hidden;
+
+        }
+
+        #center-display{
+
+            font-family: 'Lobster',cursive;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 70%;
+
+        }
+
+    </style>
+
+    <div class="container-fluid">
+    
+        <div id="center-display">
+
+            <h1 style="color: white; font-size: 4.5rem;">Welcome to MusicBuzz</h1>
+            <p style="color: white; font-size: 2rem;">Search for songs and build your own playlists on the go!</p>
+
+            <br>
+            <br>
+            
+            <div style="margin: auto; width: 65%;">
+
+                <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
+                    <input style="width: 800px;" id="searchBar" class="form-control mr-sm-2" type="search" name="searchQuery" placeholder="Search a song or artist" aria-label="Search">
+                    <button style="margin-left: 20px;" class="btn btn-outline-warning my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+<%- include("partials/footer") %>

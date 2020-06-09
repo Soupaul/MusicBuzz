@@ -150,7 +150,29 @@ function getTrack(songId,callback){
 
 }
 
+app.get("/",function(req,res){
+
+    let auth;
+
+    if (req.isAuthenticated()) {
+        auth = true;
+    } else {
+        auth = false;
+    }
+
+    res.render("home",{ auth: auth, showNavbar: true});
+
+});
+
 app.get("/songs/:id",function(req,res){
+
+    let auth;
+
+    if (req.isAuthenticated()) {
+        auth = true;
+    } else {
+        auth = false;
+    }
 
     const songId = req.params.id;
 
@@ -160,22 +182,26 @@ app.get("/songs/:id",function(req,res){
 
         const song = {title: songData.title,preview: songData.preview, cover_big: songData.album.cover_big, cover_xl: songData.album.cover_xl, artist: songData.artist.name};
 
-        res.render("song",{coverImageXL: song.cover_xl,coverImageBig: song.cover_big,artist: song.artist,songTitle: song.title,source: song.preview });
+        res.render("song",{coverImageXL: song.cover_xl,coverImageBig: song.cover_big,artist: song.artist,songTitle: song.title,source: song.preview,auth: auth,showNavbar: false });
 
     });
 
 });
 
 
-app.get("/",function(req,res){
+// app.get("/search",function(req,res){
 
-    if (req.isAuthenticated()) {
-        res.render("songlist",{songs: null, message: "successfully logged in"});
-    } else {
-        res.render("songlist", { songs: null, message: "You have not logged in" });
-    }
+//     let auth;
 
-});
+//     if (req.isAuthenticated()) {
+//         auth = true;
+//     } else {
+//         auth = false;
+//     }
+
+//     res.render("songlist",{songs: null,auth: auth});
+
+// });
 
 // for logging in the users
 
@@ -197,9 +223,27 @@ app.get("/logout", function (req, res) {
     res.redirect("/");
 });
 
-app.post("/",function(req,res){
+app.post("/search",function(req,res){
 
     let query = req.body.searchQuery;
+
+    res.redirect("/search/" + query);
+
+    
+    
+});
+
+app.get("/search/:name",function(req,res){
+
+    let auth;
+
+    if (req.isAuthenticated()) {
+        auth = true;
+    } else {
+        auth = false;
+    }
+
+    let query = req.params.name;
 
     let searchResponse = search(query,function(response){
 
@@ -213,12 +257,10 @@ app.post("/",function(req,res){
 
         }
 
-        res.render("songlist",{songs: songList});
+        res.render("songlist",{songs: songList,auth: auth,showNavbar: true});
 
     });
 
-    
-    
 });
 
 
