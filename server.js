@@ -13,7 +13,6 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 
 
-
 const app = express();
 
 
@@ -28,6 +27,7 @@ app.use(session({
     saveUninitialized: false,
 }));
 
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -37,15 +37,27 @@ mongoose.connect("mongodb://localhost:27017/songDB", {
 });
 mongoose.set("useCreateIndex", true);
 
+
 // Schema for the user
 const userSchema = new mongoose.Schema({
     googleId: String,
+    firstName: String,
+    lastName: String,
+    profilePhoto: String,
 });
+
 
 // Schema for playlist
 const playlistSchema = new mongoose.Schema({
     user: userSchema,
-    songs: [String],
+    songs: [{
+        id: String,
+        title: String,
+        preview: String,
+        cover_big: String,
+        cover_xl: String,
+        artist: String,
+    }],
 });
 
 
@@ -75,18 +87,26 @@ passport.use(new GoogleStrategy({
     callbackURL: "http://localhost:3000/auth/google/musicbuzz"
     },
     function(accessToken, refreshToken, profile, cb) {
-        console.log(profile);
+        // console.log(profile);
         
-        User.findOrCreate({ googleId: profile.id }, function (err, user) {
-            return cb(err, user);
-        });
+        User.findOrCreate(
+            {
+                googleId: profile.id,
+                firstName: profile.name.givenName,
+                lastName: profile.name.familyName,
+                profilePhoto: profile.photos[0].value,
+            },
+            function (err, user) {
+                return cb(err, user);
+            }
+        );
     }
 ));
+
 
 class Song{
 
     constructor(id,title,preview,cover_big,cover_xl,artist){
-
         this.id = id;
         this.title = title;
         this.preview = preview;
@@ -94,7 +114,6 @@ class Song{
         this.cover_xl = cover_xl;
         this.artist = artist;
     }
-
 }
 
 function search(query,callback){
@@ -111,18 +130,13 @@ function search(query,callback){
         "useQueryString": true
     });
 
-
     req.end(function (res) {
         if (res.error) throw new Error(res.error);
         else{
-
             console.log(res.body);
             callback(res.body);
-
         }
-
     });
-
 }
 
 function getTrack(songId,callback){
@@ -135,54 +149,40 @@ function getTrack(songId,callback){
         "useQueryString": true
     });
 
-
     req.end(function (res) {
         if (res.error) throw new Error(res.error);
         
         else{
-
             console.log(res.body);
             callback(res.body);
-
         }
 
     });
-
 }
 
 app.get("/",function(req,res){
 
-    let auth;
-
+    let user=null;
     if (req.isAuthenticated()) {
-        auth = true;
-    } else {
-        auth = false;
+        user = req.user;
     }
-
-    res.render("home",{ auth: auth, showNavbar: true});
-
+    res.render("home",{ showNavbar: true, user: user});
 });
+
 
 app.get("/songs/:id",function(req,res){
 
-    let auth;
-
+    let user = null;
     if (req.isAuthenticated()) {
-        auth = true;
-    } else {
-        auth = false;
+        user = req.user;
     }
-
     const songId = req.params.id;
-
     let trackResponse = getTrack(songId,function(response){
 
         const songData = response;
-
         const song = {title: songData.title,preview: songData.preview, cover_big: songData.album.cover_big, cover_xl: songData.album.cover_xl, artist: songData.artist.name};
 
-        res.render("song",{coverImageXL: song.cover_xl,coverImageBig: song.cover_big,artist: song.artist,songTitle: song.title,source: song.preview,auth: auth,showNavbar: false });
+        res.render("song",{coverImageXL: song.cover_xl,coverImageBig: song.cover_big,artist: song.artist,songTitle: song.title,source: song.preview, user: user,showNavbar: false });
 
     });
 
@@ -214,54 +214,46 @@ app.get('/auth/google/musicbuzz',
     function(req, res) {
         // Successful authentication, redirect home.
         res.redirect("/");
+        console.log("Successfully logged in"); 
 });
+
 
 // logs out the users
 
-app.get("/logout", function (req, res) {
+app.get("/:userId/logout", function (req, res) {
     req.logout();
     res.redirect("/");
+    console.log("Successfully logged out");
 });
+
 
 app.post("/search",function(req,res){
-
     let query = req.body.searchQuery;
-
     res.redirect("/search/" + query);
-
-    
-    
 });
+
 
 app.get("/search/:name",function(req,res){
 
-    let auth;
-
+    let user = null;
     if (req.isAuthenticated()) {
-        auth = true;
-    } else {
-        auth = false;
+        user = req.user;
     }
-
     let query = req.params.name;
 
     let searchResponse = search(query,function(response){
 
         const data = response.data;
-
         let songList = [];
-
         for(const song of data){
 
             songList.push(new Song(song.id,song.title,song.preview,song.album.cover_big,song.album.cover_xl,song.artist.name));
-
         }
-
-        res.render("songlist",{songs: songList,auth: auth,showNavbar: true});
-
+        res.render("songlist",{songs: songList,user: user,showNavbar: true});
     });
-
 });
+
+// Adding new songs to user playlist
 
 
 let PORT = process.env.PORT;

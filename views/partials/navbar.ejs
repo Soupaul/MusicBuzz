@@ -1,0 +1,38 @@
+<!-- Navbar Component -->
+<nav style="z-index: 1;" class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" style="color: #fed000; font-family: 'Lobster',cursive; font-size: 30px;"
+        href="/">MusicBuzz</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <form id="navbarSearch" action="/search" method="POST" class="form-inline my-2 my-lg-0">
+            <input id="searchBar" class="form-control mr-sm-2" type="search" name="searchQuery" placeholder="Search for song or artist" aria-label="Search">
+            <button style="margin-left: 15px;" class="btn btn-outline-warning my-2 my-sm-0" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+        <ul class="navbar-nav ml-auto">
+            <% if (user===null) { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">
+                        <button class="btn btn-md btn-danger" style="font-size: 20px;">Login with 
+                            <i class="fab fa-google-plus-square"></i>
+                        </button>
+                    </a>
+                </li>
+            <% } else { %>
+                <li class="nav-item"><%= user.firstName %> </li>
+                <li class="nav-item">
+                    <img src="<%= user.profilePhoto %>" alt="Profile photo" style="height: 35px; width: auto; border-radius: 50%;">
+                </li>
+                <!-- For logging out the users -->
+                <li> 
+                    <a href="/<%= user.googleId %>/logout" class="nav-link">Logout</a>
+                </li>
+            <% } %> 
+        </ul>
+    </div>
+</nav>
