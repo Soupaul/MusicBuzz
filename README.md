@@ -13,7 +13,7 @@ Head over to https://docs.mongodb.com/manual/administration/install-community/ a
 
 ```
 mkdir MusicBuzz
-cd Music Buzz
+cd MusicBuzz
 git clone https://github.com/Soupaul/MusicBuzz.git
 npm install
 
