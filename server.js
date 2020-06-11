@@ -12,7 +12,6 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 
-
 const app = express();
 
 
@@ -161,10 +160,12 @@ function getTrack(songId,callback){
 }
 
 app.get("/",function(req,res){
-
+    
     let user=null;
     if (req.isAuthenticated()) {
         user = req.user;
+        console.log(req.user);
+        
     }
     res.render("home",{ showNavbar: true, user: user});
 });
@@ -221,9 +222,13 @@ app.get('/auth/google/musicbuzz',
 // logs out the users
 
 app.get("/:userId/logout", function (req, res) {
-    req.logout();
-    res.redirect("/");
-    console.log("Successfully logged out");
+    if (req.isAuthenticated()){
+        req.logout();
+        res.redirect("/");
+        console.log("Successfully logged out");
+    } else {
+        res.redirect("/login")
+    }
 });
 
 
@@ -253,7 +258,71 @@ app.get("/search/:name",function(req,res){
     });
 });
 
+
+// Displaying the user playlist
+
+app.get("/playlist", function (req, res) {
+    if (req.isAuthenticated()) {
+        res.redirect("/" + req.user._id + "/playlist");
+    } else {
+        res.send("You need to be loggeg in to view or create your playlist");
+    }
+});
+
+app.get("/:userId/playlist", function (req, res) {
+    const currentUser = req.user;
+    Playlist.find({ user: currentUser}, function (err, foundPlaylist) {
+        if (!err) {
+            if (!foundPlaylist) {
+                res.send("No Playlists have been created");
+            }
+            else {
+                res.render("songlist", {songs: foundPlaylist.songs, user: currentUser, showNavbar:true});
+            }
+        }
+    });
+});
+
+
 // Adding new songs to user playlist
+
+app.post("/playlist", function (req, res) {
+    if (!req.isAuthenticated()) {
+        res.redirect("/login");
+    } else {
+        const currentUser = req.user;
+        const song = req.body.song
+        Playlist.find({ user: currentUser }, function (err, foundPlaylist) {
+            if (!err) {
+                if (!foundPlaylist) {
+                    // Create a new Playlist and add the song
+                    const list = new Playlist({
+                        user: currentUser,
+                        songs: [song],
+                    });
+                    list.save(function (err) {
+                        if (!err) {
+                            // Redirects only after saving the song in the playlist
+                            res.redirect("/");
+                        }
+                    });
+
+                } else {
+                    // Add song to existing playlist
+                    foundPlaylist.push(song);
+                    foundPlaylist.save(function (err) {  
+                        if (!err) {
+                            // Redirects only after saving the song 
+                            res.redirect("/")
+                        }
+                    });
+                }
+            }
+        });
+        
+    }
+});
+
 
 
 let PORT = process.env.PORT;
