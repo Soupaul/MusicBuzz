@@ -3,32 +3,24 @@
 <style>
 
     h1{
-
         color: white;
-
     }
 
     h4{
-
         color: white;
     }
 
     p{
-
         color: white;
-
     }
 
     a{
         color: white;
-
     }
 
     a:hover{
-
         text-decoration: none;
         color: white;
-
     }
 
     #center-display{
@@ -38,7 +30,6 @@
         left: 50%;
         transform: translate(-50%, -50%);
         font-size: 4rem;
-
     }
 
 
@@ -55,6 +46,9 @@
     }
 </style>
 
+    <% if (showNavbar) { %>
+        <%- include("partials/navbar") %>
+    <% } %>
     <div class="container-fluid">
         
         <div>
