@@ -265,20 +265,27 @@ app.get("/playlist", function (req, res) {
     if (req.isAuthenticated()) {
         res.redirect("/" + req.user._id + "/playlist");
     } else {
-        res.send("You need to be loggeg in to view or create your playlist");
+        res.send("You need to be logged in to view or create your playlist");
     }
 });
 
 app.get("/:userId/playlist", function (req, res) {
-    const currentUser = req.user;
-    Playlist.find({ user: currentUser}, function (err, foundPlaylist) {
-        if (!err) {
-            if (!foundPlaylist) {
-                res.send("No Playlists have been created");
-            }
-            else {
-                res.render("songlist", {songs: foundPlaylist.songs, user: currentUser, showNavbar:true});
-            }
+    User.find({ _id: req.user.id }, function (err, foundUser) {
+        if (err) {
+            console.log(err);
+        } else {
+            Playlist.find({ user: foundUser}, function (err, foundPlaylist) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    if (foundPlaylist.length===0) {
+                        res.send(foundPlaylist);
+                        
+                    } else {
+                        res.send("No Playlists have been created");
+                    }
+                }
+            });
         }
     });
 });
