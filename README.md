@@ -9,6 +9,9 @@ Head over to https://nodejs.org/en/download/ and follow install instructions.
 ## Install MongoDB ##
 Head over to https://docs.mongodb.com/manual/administration/install-community/ and follow install instructions.
 
+## Obtain API Key ##
+Head over to https://rapidapi.com/ and obtain API key for Deezer.
+
 ## Setting up the Project ##
 
 ```
