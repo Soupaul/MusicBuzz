@@ -269,6 +269,7 @@ app.get("/playlists", function (req, res) {
     }
 });
 
+<<<<<<< HEAD
 app.get("/:userId/playlists", function (req, res) {
     const currentUser = req.user;
     Playlist.find({ user: currentUser}, function (err, foundPlaylist) {
@@ -279,6 +280,25 @@ app.get("/:userId/playlists", function (req, res) {
             else {
                 res.render("songlist", {songs: foundPlaylist.songs, user: currentUser, showNavbar:true});
             }
+=======
+app.get("/:userId/playlist", function (req, res) {
+    User.find({ _id: req.user.id }, function (err, foundUser) {
+        if (err) {
+            console.log(err);
+        } else {
+            Playlist.find({ user: foundUser}, function (err, foundPlaylist) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    if (foundPlaylist.length===0) {
+                        res.send(foundPlaylist);
+                        
+                    } else {
+                        res.send("No Playlists have been created");
+                    }
+                }
+            });
+>>>>>>> 82ca3e0aebd9112c80dc0d7e38c25ad4bf63b3fd
         }
     });
 });
