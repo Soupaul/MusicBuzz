@@ -92,8 +92,13 @@
                                             <i class="fas fa-ellipsis-v"></i>
                                           </a>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                          <a class="dropdown-item" href="#">Add to Queue</a>
-                                          <a class="dropdown-item" href="#">Add to Favourites</a>
+                                        <a class="dropdown-item" href="#">Add to Queue</a>
+                                        <form action="/playlists" method="POST">
+                                            
+                                            <button class="dropdown-item" type="submit">Add to Favourites</button>
+                                            <!-- <a class="dropdown-item" type="submit">Add to Favourites</a> -->
+                                            
+                                        </form>
                                         </div>
                                       </div>
 
