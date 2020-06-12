@@ -162,8 +162,6 @@ app.get("/",function(req,res){
     let user=null;
     if (req.isAuthenticated()) {
         user = req.user;
-        console.log(req.user);
-        
     }
     res.render("home",{ showNavbar: true, user: user});
 });
@@ -275,7 +273,7 @@ app.get("/playlists", function (req, res) {
 // Displays the user's playlist. 
 
 app.get("/:userId/playlists", function (req, res) {
-    User.find({ _id: req.user.id }, function (err, foundUser) {
+    User.findOne({ _id: req.user.id }, function (err, foundUser) {
         if (err) {
             console.log(err);
         } else {
@@ -299,8 +297,6 @@ app.get("/:userId/playlists", function (req, res) {
 // Adding new songs to user playlist
 
 app.post("/playlists", function (req, res) {
-    console.log(req.body);
-    
     if (!req.isAuthenticated()) {
         res.redirect("/login");
     } else {
@@ -329,13 +325,28 @@ app.post("/playlists", function (req, res) {
                     list.save(function (err) {
                         if (!err) {
                             res.redirect("/");
+                            console.log("Successfully added song to your favorites");
                         }
                     });
                 } else {
-                    // Add Song to existing Playlist
-                    foundPlaylist.songs.push(songToAdd);
-                    foundPlaylist.save(function (err) {
-                        res.redirect("/");
+                    
+                    let flag = 1;
+                    // Check if song already exists in the playlist
+                    foundPlaylist.songs.forEach(song => {
+                        if (song.id === songToAdd.id) {
+                            flag = 0;
+                        }
+                        if (flag === 0) {
+                            console.log("Song already exists in your favorites");
+                            res.redirect("/");
+                        } else {
+                            // Add Song to existing Playlist
+                            foundPlaylist.songs.push(songToAdd);
+                            foundPlaylist.save(function (err) {
+                                console.log("Successfully added song to your favorites");
+                                res.redirect("/");
+                            });
+                        }
                     });
                 }
             }
