@@ -261,15 +261,15 @@ app.get("/search/:name",function(req,res){
 
 // Displaying the user playlist
 
-app.get("/playlist", function (req, res) {
+app.get("/playlists", function (req, res) {
     if (req.isAuthenticated()) {
-        res.redirect("/" + req.user._id + "/playlist");
+        res.redirect("/" + req.user._id + "/playlists");
     } else {
-        res.send("You need to be loggeg in to view or create your playlist");
+        res.send("You need to be logged in to view or create your playlist");
     }
 });
 
-app.get("/:userId/playlist", function (req, res) {
+app.get("/:userId/playlists", function (req, res) {
     const currentUser = req.user;
     Playlist.find({ user: currentUser}, function (err, foundPlaylist) {
         if (!err) {
@@ -286,7 +286,7 @@ app.get("/:userId/playlist", function (req, res) {
 
 // Adding new songs to user playlist
 
-app.post("/playlist", function (req, res) {
+app.post("/playlists", function (req, res) {
     if (!req.isAuthenticated()) {
         res.redirect("/login");
     } else {
