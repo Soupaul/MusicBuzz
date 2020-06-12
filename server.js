@@ -115,6 +115,8 @@ class Song{
     }
 }
 
+// For searching based on the query String.
+
 function search(query,callback){
 
     var req = unirest("GET", "https://deezerdevs-deezer.p.rapidapi.com/search");
@@ -138,6 +140,8 @@ function search(query,callback){
     });
 }
 
+// For getting a single track based on songId.
+
 function getTrack(songId,callback){
 
     var req = unirest("GET", "https://deezerdevs-deezer.p.rapidapi.com/track/" + songId);
@@ -159,6 +163,8 @@ function getTrack(songId,callback){
     });
 }
 
+// For home page
+
 app.get("/",function(req,res){
     
     let user=null;
@@ -170,6 +176,7 @@ app.get("/",function(req,res){
     res.render("home",{ showNavbar: true, user: user});
 });
 
+// For displaying the player.
 
 app.get("/songs/:id",function(req,res){
 
@@ -189,20 +196,6 @@ app.get("/songs/:id",function(req,res){
 
 });
 
-
-// app.get("/search",function(req,res){
-
-//     let auth;
-
-//     if (req.isAuthenticated()) {
-//         auth = true;
-//     } else {
-//         auth = false;
-//     }
-
-//     res.render("songlist",{songs: null,auth: auth});
-
-// });
 
 // for logging in the users
 
@@ -231,12 +224,15 @@ app.get("/:userId/logout", function (req, res) {
     }
 });
 
+// Posts the query to the search function of the API.
 
 app.post("/search",function(req,res){
     let query = req.body.searchQuery;
     res.redirect("/search/" + query);
 });
 
+
+// Displays the search results based on the name parameter.
 
 app.get("/search/:name",function(req,res){
 
@@ -259,17 +255,19 @@ app.get("/search/:name",function(req,res){
 });
 
 
-// Displaying the user playlist
+// Redirects to the user's playlist.
 
-app.get("/playlist", function (req, res) {
+app.get("/playlists", function (req, res) {
     if (req.isAuthenticated()) {
-        res.redirect("/" + req.user._id + "/playlist");
+        res.redirect("/" + req.user._id + "/playlists");
     } else {
         res.send("You need to be logged in to view or create your playlist");
     }
 });
 
-app.get("/:userId/playlist", function (req, res) {
+// Displays the user's playlist. 
+
+app.get("/:userId/playlists", function (req, res) {
     User.find({ _id: req.user.id }, function (err, foundUser) {
         if (err) {
             console.log(err);
@@ -279,10 +277,10 @@ app.get("/:userId/playlist", function (req, res) {
                     console.log(err);
                 } else {
                     if (foundPlaylist.length===0) {
-                        res.send(foundPlaylist);
+                        res.send("No Playlists have been created");
                         
                     } else {
-                        res.send("No Playlists have been created");
+                        res.render("songlist",{songs: foundPlaylist.songs, user: foundPlaylist.user, showNavbar: true});
                     }
                 }
             });
@@ -293,7 +291,7 @@ app.get("/:userId/playlist", function (req, res) {
 
 // Adding new songs to user playlist
 
-app.post("/playlist", function (req, res) {
+app.post("/playlists", function (req, res) {
     if (!req.isAuthenticated()) {
         res.redirect("/login");
     } else {
@@ -336,6 +334,8 @@ let PORT = process.env.PORT;
 if (PORT == null || PORT == "") {
     PORT = 3000;
 }
+
+// Starts the server at the desired PORT.
 
 app.listen(PORT,function(){
     console.log("Server started on http://localhost:" + PORT);

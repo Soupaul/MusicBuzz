@@ -6,7 +6,7 @@
         color: white;
     }
 
-    h4{
+    h3{
         color: white;
     }
 
@@ -33,6 +33,20 @@
     }
 
 
+    #holder{
+
+        position: relative;
+
+    }
+
+    #holder .dropdown{
+
+        position: absolute;
+        right: 40px;
+        top: 10px;
+
+    }
+
     .coverImage {
         opacity: 0.8;
         transform: scale(1);
@@ -44,6 +58,7 @@
         transform: scale(1.06);
         opacity: 1;
     }
+
 </style>
 
     <% if (showNavbar) { %>
@@ -67,9 +82,28 @@
                         <div class="col mb-4 mt-4">
                             <a href="/songs/<%= song.id %> ">
                             <div class="card-transparent text-center">
-    
-                                <img class="coverImage" style="width: 85%; border-radius: 10px;" src=<%= song.cover_big %> alt="Cover image of song" class="card-img-top">
-    
+
+                                <div id="holder">
+
+                                    <img class="coverImage card-img-top" style="width: 85%; border-radius: 10px;" src=<%= song.cover_big %> alt="Cover image of song">
+                                    <!-- <button class="btn btn-md btn-dark"><i class="fas fa-ellipsis-v"></i></button> -->
+                                    <div class="dropdown dropleft">
+                                        <a class="btn btn-dark" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                          </a>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="#">Add to Queue</a>
+                                        <form action="/playlists" method="POST">
+                                            
+                                            <button class="dropdown-item" type="submit">Add to Favourites</button>
+                                            <!-- <a class="dropdown-item" type="submit">Add to Favourites</a> -->
+                                            
+                                        </form>
+                                        </div>
+                                      </div>
+
+                                </div>        
+                            
                                 <div class="card-body">
     
                                     <h3 class="card-title"><strong><%= song.title %></strong></h3>
