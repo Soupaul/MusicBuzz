@@ -126,7 +126,7 @@ function search(query,callback){
     req.end(function (res) {
         if (res.error) throw new Error(res.error);
         else{
-            console.log(res.body);
+            // console.log(res.body);
             callback(res.body);
         }
     });
@@ -279,11 +279,11 @@ app.get("/:userId/playlists", function (req, res) {
         if (err) {
             console.log(err);
         } else {
-            Playlist.find({ user: foundUser}, function (err, foundPlaylist) {
+            Playlist.findOne({ user: foundUser}, function (err, foundPlaylist) {
                 if (err) {
                     console.log(err);
                 } else {
-                    if (foundPlaylist.length===0) {
+                    if (!foundPlaylist) {
                         res.send("No Playlists have been created");
                         
                     } else {
@@ -299,39 +299,47 @@ app.get("/:userId/playlists", function (req, res) {
 // Adding new songs to user playlist
 
 app.post("/playlists", function (req, res) {
+    console.log(req.body);
+    
     if (!req.isAuthenticated()) {
         res.redirect("/login");
     } else {
         const currentUser = req.user;
-        const song = req.body.song
-        Playlist.find({ user: currentUser }, function (err, foundPlaylist) {
-            if (!err) {
+        const songInfo = JSON.parse(req.body.songInfo);
+        console.log(songInfo);
+        Playlist.findOne({ user: currentUser }, function (err, foundPlaylist) {
+            if (err) {
+                console.log(err);
+            } else {
+                const songToAdd  = new Song({
+                    id: songInfo.id,
+                    title: songInfo.title,
+                    preview: songInfo.preview,
+                    cover_big: songInfo.cover_big,
+                    cover_xl: songInfo.cover_xl,
+                    artist: songInfo.artist
+                });
                 if (!foundPlaylist) {
-                    // Create a new Playlist and add the song
+                    // Create a new Playlist
+                    songs = [songToAdd];
                     const list = new Playlist({
                         user: currentUser,
-                        songs: [song],
+                        songs: songs,
                     });
                     list.save(function (err) {
                         if (!err) {
-                            // Redirects only after saving the song in the playlist
                             res.redirect("/");
                         }
                     });
-
                 } else {
-                    // Add song to existing playlist
-                    foundPlaylist.push(song);
-                    foundPlaylist.save(function (err) {  
-                        if (!err) {
-                            // Redirects only after saving the song 
-                            res.redirect("/")
-                        }
+                    // Add Song to existing Playlist
+                    foundPlaylist.songs.push(songToAdd);
+                    foundPlaylist.save(function (err) {
+                        res.redirect("/");
                     });
                 }
             }
         });
-        
     }
 });
 
