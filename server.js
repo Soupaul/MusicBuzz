@@ -45,18 +45,20 @@ const userSchema = new mongoose.Schema({
     profilePhoto: String,
 });
 
+// Schema for the song
+const songSchema = new mongoose.Schema({
+    id: String,
+    title: String,
+    preview: String,
+    cover_big: String,
+    cover_xl: String,
+    artist: String,
+});
 
 // Schema for playlist
 const playlistSchema = new mongoose.Schema({
     user: userSchema,
-    songs: [{
-        id: String,
-        title: String,
-        preview: String,
-        cover_big: String,
-        cover_xl: String,
-        artist: String,
-    }],
+    songs: [songSchema],
 });
 
 
@@ -66,6 +68,8 @@ userSchema.plugin(findOrCreate);
 const User = mongoose.model("User", userSchema);
 
 const Playlist = mongoose.model("Playlist", playlistSchema);
+
+const Song = mongoose.model("Song", songSchema);
 
 
 passport.serializeUser(function(user, done) {
@@ -102,18 +106,6 @@ passport.use(new GoogleStrategy({
     }
 ));
 
-
-class Song{
-
-    constructor(id,title,preview,cover_big,cover_xl,artist){
-        this.id = id;
-        this.title = title;
-        this.preview = preview;
-        this.cover_big = cover_big;
-        this.cover_xl = cover_xl;
-        this.artist = artist;
-    }
-}
 
 // For searching based on the query String.
 
@@ -188,9 +180,17 @@ app.get("/songs/:id",function(req,res){
     let trackResponse = getTrack(songId,function(response){
 
         const songData = response;
-        const song = {title: songData.title,preview: songData.preview, cover_big: songData.album.cover_big, cover_xl: songData.album.cover_xl, artist: songData.artist.name};
+        const song = new Song({
+            id: songId,
+            title: songData.title,
+            preview: songData.preview,
+            cover_big: songData.album.cover_big,
+            cover_xl: songData.album.cover_xl,
+            artist: songData.artist.name,
+        });
+        // const song = {title: songData.title,preview: songData.preview, cover_big: songData.album.cover_big, cover_xl: songData.album.cover_xl, artist: songData.artist.name};
 
-        res.render("song",{coverImageXL: song.cover_xl,coverImageBig: song.cover_big,artist: song.artist,songTitle: song.title,source: song.preview, user: user,showNavbar: false });
+        res.render("song",{song: song, user: user,showNavbar: false });
 
     });
 
@@ -247,8 +247,15 @@ app.get("/search/:name",function(req,res){
         const data = response.data;
         let songList = [];
         for(const song of data){
-
-            songList.push(new Song(song.id,song.title,song.preview,song.album.cover_big,song.album.cover_xl,song.artist.name));
+            const newSong = new Song({
+                id: song.id,
+                title: song.title,
+                preview: song.preview,
+                cover_big: song.album.cover_big,
+                cover_xl: song.album.cover_xl,
+                artist: song.artist.name
+            });
+            songList.push(newSong);
         }
         res.render("songlist",{songs: songList,user: user,showNavbar: true});
     });
