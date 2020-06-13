@@ -95,7 +95,7 @@
                                         <a class="dropdown-item" href="#">Add to Queue</a>
                                         <form action="/playlists" method="POST">
                                             
-                                            <button class="dropdown-item" type="submit">Add to Favourites</button>
+                                            <button class="dropdown-item" type="submit" name="songInfo" value="<%= JSON.stringify(song) %>">Add to Favourites</button>
                                             <!-- <a class="dropdown-item" type="submit">Add to Favourites</a> -->
                                             
                                         </form>

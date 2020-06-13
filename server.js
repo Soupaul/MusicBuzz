@@ -45,18 +45,20 @@ const userSchema = new mongoose.Schema({
     profilePhoto: String,
 });
 
+// Schema for the song
+const songSchema = new mongoose.Schema({
+    id: String,
+    title: String,
+    preview: String,
+    cover_big: String,
+    cover_xl: String,
+    artist: String,
+});
 
 // Schema for playlist
 const playlistSchema = new mongoose.Schema({
     user: userSchema,
-    songs: [{
-        id: String,
-        title: String,
-        preview: String,
-        cover_big: String,
-        cover_xl: String,
-        artist: String,
-    }],
+    songs: [songSchema],
 });
 
 
@@ -66,6 +68,8 @@ userSchema.plugin(findOrCreate);
 const User = mongoose.model("User", userSchema);
 
 const Playlist = mongoose.model("Playlist", playlistSchema);
+
+const Song = mongoose.model("Song", songSchema);
 
 
 passport.serializeUser(function(user, done) {
@@ -103,18 +107,6 @@ passport.use(new GoogleStrategy({
 ));
 
 
-class Song{
-
-    constructor(id,title,preview,cover_big,cover_xl,artist){
-        this.id = id;
-        this.title = title;
-        this.preview = preview;
-        this.cover_big = cover_big;
-        this.cover_xl = cover_xl;
-        this.artist = artist;
-    }
-}
-
 // For searching based on the query String.
 
 function search(query,callback){
@@ -134,7 +126,7 @@ function search(query,callback){
     req.end(function (res) {
         if (res.error) throw new Error(res.error);
         else{
-            console.log(res.body);
+            // console.log(res.body);
             callback(res.body);
         }
     });
@@ -170,8 +162,6 @@ app.get("/",function(req,res){
     let user=null;
     if (req.isAuthenticated()) {
         user = req.user;
-        console.log(req.user);
-        
     }
     res.render("home",{ showNavbar: true, user: user});
 });
@@ -188,9 +178,17 @@ app.get("/songs/:id",function(req,res){
     let trackResponse = getTrack(songId,function(response){
 
         const songData = response;
-        const song = {title: songData.title,preview: songData.preview, cover_big: songData.album.cover_big, cover_xl: songData.album.cover_xl, artist: songData.artist.name};
+        const song = new Song({
+            id: songId,
+            title: songData.title,
+            preview: songData.preview,
+            cover_big: songData.album.cover_big,
+            cover_xl: songData.album.cover_xl,
+            artist: songData.artist.name,
+        });
+        // const song = {title: songData.title,preview: songData.preview, cover_big: songData.album.cover_big, cover_xl: songData.album.cover_xl, artist: songData.artist.name};
 
-        res.render("song",{coverImageXL: song.cover_xl,coverImageBig: song.cover_big,artist: song.artist,songTitle: song.title,source: song.preview, user: user,showNavbar: false });
+        res.render("song",{song: song, user: user,showNavbar: false });
 
     });
 
@@ -247,8 +245,15 @@ app.get("/search/:name",function(req,res){
         const data = response.data;
         let songList = [];
         for(const song of data){
-
-            songList.push(new Song(song.id,song.title,song.preview,song.album.cover_big,song.album.cover_xl,song.artist.name));
+            const newSong = new Song({
+                id: song.id,
+                title: song.title,
+                preview: song.preview,
+                cover_big: song.album.cover_big,
+                cover_xl: song.album.cover_xl,
+                artist: song.artist.name
+            });
+            songList.push(newSong);
         }
         res.render("songlist",{songs: songList,user: user,showNavbar: true});
     });
@@ -268,15 +273,15 @@ app.get("/playlists", function (req, res) {
 // Displays the user's playlist. 
 
 app.get("/:userId/playlists", function (req, res) {
-    User.find({ _id: req.user.id }, function (err, foundUser) {
+    User.findOne({ _id: req.user.id }, function (err, foundUser) {
         if (err) {
             console.log(err);
         } else {
-            Playlist.find({ user: foundUser}, function (err, foundPlaylist) {
+            Playlist.findOne({ user: foundUser}, function (err, foundPlaylist) {
                 if (err) {
                     console.log(err);
                 } else {
-                    if (foundPlaylist.length===0) {
+                    if (!foundPlaylist) {
                         res.send("No Playlists have been created");
                         
                     } else {
@@ -296,35 +301,56 @@ app.post("/playlists", function (req, res) {
         res.redirect("/login");
     } else {
         const currentUser = req.user;
-        const song = req.body.song
-        Playlist.find({ user: currentUser }, function (err, foundPlaylist) {
-            if (!err) {
+        const songInfo = JSON.parse(req.body.songInfo);
+        console.log(songInfo);
+        Playlist.findOne({ user: currentUser }, function (err, foundPlaylist) {
+            if (err) {
+                console.log(err);
+            } else {
+                const songToAdd  = new Song({
+                    id: songInfo.id,
+                    title: songInfo.title,
+                    preview: songInfo.preview,
+                    cover_big: songInfo.cover_big,
+                    cover_xl: songInfo.cover_xl,
+                    artist: songInfo.artist
+                });
                 if (!foundPlaylist) {
-                    // Create a new Playlist and add the song
+                    // Create a new Playlist
+                    songs = [songToAdd];
                     const list = new Playlist({
                         user: currentUser,
-                        songs: [song],
+                        songs: songs,
                     });
                     list.save(function (err) {
                         if (!err) {
-                            // Redirects only after saving the song in the playlist
                             res.redirect("/");
+                            console.log("Successfully added song to your favorites");
                         }
                     });
-
                 } else {
-                    // Add song to existing playlist
-                    foundPlaylist.push(song);
-                    foundPlaylist.save(function (err) {  
-                        if (!err) {
-                            // Redirects only after saving the song 
-                            res.redirect("/")
+                    
+                    let flag = 1;
+                    // Check if song already exists in the playlist
+                    foundPlaylist.songs.forEach(song => {
+                        if (song.id === songToAdd.id) {
+                            flag = 0;
+                        }
+                        if (flag === 0) {
+                            console.log("Song already exists in your favorites");
+                            res.redirect("/");
+                        } else {
+                            // Add Song to existing Playlist
+                            foundPlaylist.songs.push(songToAdd);
+                            foundPlaylist.save(function (err) {
+                                console.log("Successfully added song to your favorites");
+                                res.redirect("/");
+                            });
                         }
                     });
                 }
             }
         });
-        
     }
 });
 

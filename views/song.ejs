@@ -4,7 +4,7 @@
     <style>
 
         :root{
-            --songImg: url(<%= coverImageXL %>);
+            --songImg: url(<%= song.cover_xl %>);
         }
 
         .bg{
@@ -21,12 +21,12 @@
 
             <div class="card text-center mb-4" style="width: 30%; box-shadow: -5px -5px 15px black; border-radius: 15px; margin: 0 auto;">
 
-                <img class="card-img-top" style="border-top-left-radius: 15px; border-top-right-radius: 15px;" src=<%= coverImageBig %> alt="Cover image of song">
+                <img class="card-img-top" style="border-top-left-radius: 15px; border-top-right-radius: 15px;" src=<%= song.cover_big %> alt="Cover image of song">
                 
                 <div class="card-body">
 
-                    <h3 class="card-title"><strong><%= songTitle %></strong></h3>
-                    <p class="card-text"><%= artist %></p>
+                    <h3 class="card-title"><strong><%= song.title %></strong></h3>
+                    <p class="card-text"><%= song.artist %></p>
 
                 </div>
 
@@ -53,7 +53,7 @@
 
             </div>
 
-            <audio src=<%= source %> id="song"></audio>
+            <audio src=<%= song.preview %> id="song"></audio>
 
         </div>
 
