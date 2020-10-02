@@ -1,0 +1,13 @@
+version: "3"
+services: 
+    db:
+        image: "mongo"
+
+    web:
+        build: .
+        command: node server.js
+        container_name: music_buzz
+        ports: 
+            - "3000:3000"
+        depends_on: 
+            - db

@@ -356,13 +356,13 @@ app.post("/playlists", function (req, res) {
 
 
 
-let PORT = process.env.PORT;
-if (PORT == null || PORT == "") {
-    PORT = 3000;
-}
+// let PORT = process.env.PORT;
+// if (PORT == null || PORT == "") {
+//     PORT = 3000;
+// }
 
 // Starts the server at the desired PORT.
 
-app.listen(PORT,function(){
-    console.log("Server started on http://localhost:" + PORT);
+app.listen(3000,function(){
+    console.log("Server started on port 3000");
 });
